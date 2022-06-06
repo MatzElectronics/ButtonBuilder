@@ -40,12 +40,8 @@ var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.renderCurrent = function () {
-            var size = _this.sizeInput.valueAsNumber;
-            if (!size)
-                size = parseFloat(_this.sizeInput.value);
-            if (!size)
-                size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value);
+            var size = 60
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -53,161 +49,19 @@ var App = /** @class */ (function () {
             var v = f.variants.forEach(function (v) { return _this.addOption(_this.selectVariant, v); });
             _this.renderCurrent();
         };
-        this.downloadSvg = function () {
-            var SvgFile = window.btoa(_this.outputTextarea.value);
-            _this.downloadButton.href = 'data:image/svg+xml;base64,' + SvgFile;
-            _this.downloadButton.download = _this.textInput.value;
-        };
-        this.downloadDxf = function () {
-            var dxfFile = window.btoa(_this.renderDiv.getAttribute('data-dxf'));
-            _this.dxfButton.href = 'data:application/dxf;base64,' + dxfFile;
-            _this.dxfButton.download = _this.textInput.value + '.dxf';
-        };
-        this.copyToClipboard = function () {
-            _this.outputTextarea.select();
-            document.execCommand('copy');
-            _this.copyToClipboardBtn.innerText = 'copied';
-            setTimeout(function () {
-                _this.copyToClipboardBtn.innerText = 'copy to clipboard';
-            }, 2000);
-        };
-        this.updateUrl = function () {
-            var urlSearchParams = new URLSearchParams(window.location.search);
-            urlSearchParams.set('font-select', _this.selectFamily.value);
-            urlSearchParams.set('font-variant', _this.selectVariant.value);
-            urlSearchParams.set('input-union', String(_this.unionCheckbox.checked));
-            urlSearchParams.set('input-filled', String(_this.filledCheckbox.checked));
-            urlSearchParams.set('input-kerning', String(_this.kerningCheckbox.checked));
-            urlSearchParams.set('input-separate', String(_this.separateCheckbox.checked));
-            urlSearchParams.set('input-text', _this.textInput.value);
-            urlSearchParams.set('input-bezier-accuracy', _this.bezierAccuracy.value);
-            urlSearchParams.set('dxf-units', _this.selectUnits.value);
-            urlSearchParams.set('input-size', _this.sizeInput.value);
-            var url = window.location.protocol
-                + "//" + window.location.host
-                + window.location.pathname
-                + "?"
-                + urlSearchParams.toString();
-            window.history.replaceState({ path: url }, "", url);
-            _this.copyString(window.location.href);
-            _this.createLinkButton.innerText = 'copied';
-            setTimeout(function () {
-                _this.createLinkButton.innerText = 'create link';
-            }, 2000);
-        };
-        this.copyString = function (string) {
-            _this.dummy.value = string;
-            _this.dummy.type = 'text';
-            _this.dummy.select();
-            document.execCommand('copy');
-            _this.dummy.type = 'hidden';
-        };
-        this.readUploadedFile = function (event) { return __awaiter(_this, void 0, void 0, function () {
-            var element, files, buffer, font;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        element = event.currentTarget;
-                        if (!(element.files.length === 0)) return [3 /*break*/, 1];
-                        this.customFont = undefined;
-                        return [3 /*break*/, 3];
-                    case 1:
-                        files = element.files[0];
-                        return [4 /*yield*/, files.arrayBuffer()];
-                    case 2:
-                        buffer = _a.sent();
-                        font = opentype.parse(buffer);
-                        this.customFont = font;
-                        _a.label = 3;
-                    case 3:
-                        this.renderCurrent();
-                        return [2 /*return*/];
-                }
-            });
-        }); };
-        this.removeUploadedFont = function () {
-            _this.fileUpload.value = null;
-            _this.customFont = undefined;
-            _this.renderCurrent();
-        };
     }
     App.prototype.init = function () {
-        var _this = this;
-        this.fileUpload = this.$('#font-upload');
-        this.fileUploadRemove = this.$('#font-upload-remove');
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
-        this.unionCheckbox = this.$('#input-union');
-        this.filledCheckbox = this.$('#input-filled');
-        this.kerningCheckbox = this.$('#input-kerning');
-        this.separateCheckbox = this.$('#input-separate');
         this.textInput = this.$('#input-text');
-        this.bezierAccuracy = this.$('#input-bezier-accuracy');
-        this.selectUnits = this.$('#dxf-units');
-        this.sizeInput = this.$('#input-size');
-        this.renderDiv = this.$('#svg-render');
-        this.outputTextarea = this.$('#output-svg');
-        this.downloadButton = this.$("#download-btn");
-        this.dxfButton = this.$("#dxf-btn");
-        this.createLinkButton = this.$("#create-link");
-        this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn");
         this.dummy = this.$('#dummy');
-        // Init units select.
-        Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
-    };
-    App.prototype.readQueryParams = function () {
-        var urlSearchParams = new URLSearchParams(window.location.search);
-        var selectFamily = urlSearchParams.get('font-select');
-        var selectVariant = urlSearchParams.get('font-variant');
-        var unionCheckbox = urlSearchParams.get('input-union');
-        var filledCheckbox = urlSearchParams.get('input-filled');
-        var kerningCheckbox = urlSearchParams.get('input-kerning');
-        var separateCheckbox = urlSearchParams.get('input-separate');
-        var textInput = urlSearchParams.get('input-text');
-        var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
-        var selectUnits = urlSearchParams.get('dxf-units');
-        var sizeInput = urlSearchParams.get('input-size');
-        if (selectFamily !== "" && selectFamily !== null)
-            this.selectFamily.value = selectFamily;
-        if (selectVariant !== "" && selectVariant !== null)
-            this.selectVariant.value = selectVariant;
-        if (selectUnits !== "" && selectUnits !== null)
-            this.selectUnits.value = selectUnits;
-        if (unionCheckbox !== "" && unionCheckbox !== null)
-            this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
-        if (filledCheckbox !== "" && filledCheckbox !== null)
-            this.filledCheckbox.checked = filledCheckbox === "true" ? true : false;
-        if (kerningCheckbox !== "" && kerningCheckbox !== null)
-            this.kerningCheckbox.checked = kerningCheckbox === "true" ? true : false;
-        if (separateCheckbox !== "" && separateCheckbox !== null)
-            this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
-        if (textInput !== "" && textInput !== null)
-            this.textInput.value = textInput;
-        if (bezierAccuracy !== "" && bezierAccuracy !== null)
-            this.bezierAccuracy.value = bezierAccuracy;
-        if (sizeInput !== "" && sizeInput !== null)
-            this.sizeInput.value = sizeInput;
     };
     App.prototype.handleEvents = function () {
-        this.fileUpload.onchange = this.readUploadedFile;
-        this.fileUploadRemove.onclick = this.removeUploadedFont;
         this.selectFamily.onchange = this.loadVariants;
         this.selectVariant.onchange =
             this.textInput.onchange =
                 this.textInput.onkeyup =
-                    this.sizeInput.onkeyup =
-                        this.unionCheckbox.onchange =
-                            this.filledCheckbox.onchange =
-                                this.kerningCheckbox.onchange =
-                                    this.separateCheckbox.onchange =
-                                        this.bezierAccuracy.onchange =
-                                            this.bezierAccuracy.onkeyup =
-                                                this.selectUnits.onchange =
-                                                    this.renderCurrent;
-        this.copyToClipboardBtn.onclick = this.copyToClipboard;
-        this.downloadButton.onclick = this.downloadSvg;
-        this.dxfButton.onclick = this.downloadDxf;
-        this.createLinkButton.onclick = this.updateUrl;
+                    this.renderCurrent;
     };
     App.prototype.$ = function (selector) {
         return document.querySelector(selector);
@@ -227,43 +81,47 @@ var App = /** @class */ (function () {
             _this.fontList.items.forEach(function (font) { return _this.addOption(_this.selectFamily, font.family); });
             _this.loadVariants();
             _this.handleEvents();
-            _this.readQueryParams();
             _this.renderCurrent();
         };
         xhr.send();
     };
-    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units) {
-        //generate the text using a font
-        var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning: kerning });
-        if (separate) {
-            for (var i in textModel.models) {
-                textModel.models[i].layer = i;
-            }
-        }
-        var svg = makerjs.exporter.toSVG(textModel, { fill: filled ? 'black' : undefined });
-        var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
-        this.renderDiv.innerHTML = svg;
-        this.renderDiv.setAttribute('data-dxf', dxf);
-        this.outputTextarea.value = svg;
+    App.prototype.callMakerjs = function (font, text, size, callback) {
 
-        if (textGenerated) {
+        //generate the text using a font
+        var textModel = new makerjs.models.Text(font, text, size, false, false, undefined, { kerning: true });
+        var svg = makerjs.exporter.toSVG(textModel, { fill: 'black'});
+
+        if (callback) {
+            callback(svg);
+        } else if (textGenerated) {
             textGenerated(svg);
         }
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, callback) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
-        if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units);
+        opentype.load(url, function (err, font) {
+            _this.callMakerjs(font, text, size, callback);
+        });
+    };
+    App.prototype.build = function (fontName, variantName, text, callback) {
+        let _this = this
+        let fontIndex = this.fontList.items.findIndex(item => item.family === fontName);
+        if (fontIndex < 0) {
+            fontIndex = 0;
         }
-        else {
-            opentype.load(url, function (err, font) {
-                _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units);
+        let variantIndex = this.fontList.items[fontIndex].variants.indexOf(variantName);
+        if (variantIndex < 0 ) {
+            ['regular', '400', '500', '300', '600', '700'].forEach(v => {
+                if (variantIndex < 0 ) {
+                    variantIndex = _this.fontList.items[fontIndex].variants.indexOf(v);
+                }
             });
         }
-    };
+        this.render(fontIndex, variantIndex, text, 60, callback);
+    }
     return App;
 }());
 var app = new App();

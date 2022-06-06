@@ -14,7 +14,7 @@
         main {
             display: flex;
             flex-direction: row;
-            justify-content: flex-start;
+            justify-content: space-evenly;
             align-items: flex-start;
             flex-wrap: wrap;
             margin-top: 20px;
@@ -139,6 +139,12 @@
             background-repeat: repeat;
         }
 
+        .button-css.button {
+            padding: 5px;
+            margin: 0 5px 0 0;
+            display: inline-block;
+        }
+
         .button-css:hover {
             filter: brightness(0.9);
         }
@@ -209,10 +215,8 @@
 
         #gallery {
             display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: flex-start;
             align-items: center;
+            justify-content: space-evenly;
         }
 
         #gallery>div {
@@ -227,10 +231,16 @@
             text-align: center;
             padding: 10px;
         }
+
+        .premade-row, .required-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            margin: 25px;
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
-
     <script src="https://maker.js.org/target/js/browser.maker.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script>
     <script src="fa-icons.js"></script>
@@ -238,42 +248,41 @@
     <script src="index-font.js" type="text/javascript"></script>
 
     <script>
+        function $(e) {
+            return document.querySelector(e);
+        }
+
+        function $$(e) {
+            return document.querySelectorAll(e);
+        }
+
+        function removeAllChildNodes(parent) {
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+        }
+
         function autocomplete(inp, arr, callback) {
-            /*the autocomplete function takes two arguments,
-            the text field element and an array of possible autocompleted values:*/
             var currentFocus;
-            /*execute a function when someone writes in the text field:*/
             inp.addEventListener("input", function (e) {
                 var a, b, i, val = this.value;
-                /*close any already open lists of autocompleted values*/
                 closeAllLists();
                 if (!val) {
                     return false;
                 }
                 currentFocus = -1;
-                /*create a DIV element that will contain the items (values):*/
                 a = document.createElement("DIV");
                 a.setAttribute("id", this.id + "autocomplete-list");
                 a.setAttribute("class", "autocomplete-items");
-                /*append the DIV element as a child of the autocomplete container:*/
                 this.parentNode.appendChild(a);
-                /*for each item in the array...*/
                 for (i = 0; i < arr.length; i++) {
-                    /*check if the item starts with the same letters as the text field value:*/
                     if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                        /*create a DIV element for each matching element:*/
                         b = document.createElement("DIV");
-                        /*make the matching letters bold:*/
                         b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
                         b.innerHTML += arr[i].substr(val.length);
-                        /*insert a input field that will hold the current array item's value:*/
                         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-                        /*execute a function when someone clicks on the item value (DIV element):*/
                         b.addEventListener("click", function (e) {
-                            /*insert the value for the autocomplete text field:*/
                             inp.value = this.getElementsByTagName("input")[0].value;
-                            /*close the list of autocompleted values,
-                            (or any other open lists of autocompleted values:*/
                             closeAllLists();
                             callback(inp.value);
                         });
@@ -281,53 +290,38 @@
                     }
                 }
             });
-            /*execute a function presses a key on the keyboard:*/
             inp.addEventListener("keydown", function (e) {
                 var x = document.getElementById(this.id + "autocomplete-list");
                 if (x) x = x.getElementsByTagName("div");
                 if (e.keyCode == 40) {
-                    /*If the arrow DOWN key is pressed,
-                    increase the currentFocus variable:*/
                     currentFocus++;
-                    /*and and make the current item more visible:*/
                     addActive(x);
                 } else if (e.keyCode == 38) { //up
-                    /*If the arrow UP key is pressed,
-                    decrease the currentFocus variable:*/
                     currentFocus--;
-                    /*and and make the current item more visible:*/
                     addActive(x);
                 } else if (e.keyCode == 13) {
-                    /*If the ENTER key is pressed, prevent the form from being submitted,*/
                     e.preventDefault();
                     if (currentFocus > -1) {
-                        /*and simulate a click on the "active" item:*/
                         if (x) x[currentFocus].click();
                     }
                 }
             });
 
             function addActive(x) {
-                /*a function to classify an item as "active":*/
                 if (!x) return false;
-                /*start by removing the "active" class on all items:*/
                 removeActive(x);
                 if (currentFocus >= x.length) currentFocus = 0;
                 if (currentFocus < 0) currentFocus = (x.length - 1);
-                /*add class "autocomplete-active":*/
                 x[currentFocus].classList.add("autocomplete-active");
             }
 
             function removeActive(x) {
-                /*a function to remove the "active" class from all autocomplete items:*/
                 for (var i = 0; i < x.length; i++) {
                     x[i].classList.remove("autocomplete-active");
                 }
             }
 
             function closeAllLists(elmnt) {
-                /*close all autocomplete lists in the document,
-                except the one passed as an argument:*/
                 var x = document.getElementsByClassName("autocomplete-items");
                 for (var i = 0; i < x.length; i++) {
                     if (elmnt != x[i] && elmnt != inp) {
@@ -335,7 +329,6 @@
                     }
                 }
             }
-            /*execute a function when someone clicks in the document:*/
             document.addEventListener("click", function (e) {
                 closeAllLists(e.target);
             });
@@ -350,23 +343,82 @@
         var color_bright_text = 0;
 
         /**
- * Calculate brightness value by RGB or HEX color.
- * @param color (String) The color value in RGB or HEX (for example: #000000 || #000 || rgb(0,0,0) || rgba(0,0,0,0))
- * @returns (Number) The brightness value (dark) 0 ... 255 (light)
- */
-function brightnessByColor(color) {
-  var color = "" + color, isHEX = color.indexOf("#") == 0, isRGB = color.indexOf("rgb") == 0;
-  if (isHEX) {
-    const hasFullSpec = color.length == 7;
-    var m = color.substr(1).match(hasFullSpec ? /(\S{2})/g : /(\S{1})/g);
-    if (m) var r = parseInt(m[0] + (hasFullSpec ? '' : m[0]), 16), g = parseInt(m[1] + (hasFullSpec ? '' : m[1]), 16), b = parseInt(m[2] + (hasFullSpec ? '' : m[2]), 16);
-  }
-  if (isRGB) {
-    var m = color.match(/(\d+){3}/g);
-    if (m) var r = m[0], g = m[1], b = m[2];
-  }
-  if (typeof r != "undefined") return ((r*299)+(g*587)+(b*114))/1000;
-}
+         * Calculate brightness value by RGB or HEX color.
+         * @param color (String) The color value in RGB or HEX (for example: #000000 || #000 || rgb(0,0,0) || rgba(0,0,0,0))
+         * @returns (Number) The brightness value (dark) 0 ... 255 (light)
+         */
+        function brightnessByColor(color) {
+            var color = "" + color,
+                isHEX = color.indexOf("#") == 0,
+                isRGB = color.indexOf("rgb") == 0;
+            if (isHEX) {
+                const hasFullSpec = color.length == 7;
+                var m = color.substr(1).match(hasFullSpec ? /(\S{2})/g : /(\S{1})/g);
+                if (m) var r = parseInt(m[0] + (hasFullSpec ? '' : m[0]), 16),
+                    g = parseInt(m[1] + (hasFullSpec ? '' : m[1]), 16),
+                    b = parseInt(m[2] + (hasFullSpec ? '' : m[2]), 16);
+            }
+            if (isRGB) {
+                var m = color.match(/(\d+){3}/g);
+                if (m) var r = m[0],
+                    g = m[1],
+                    b = m[2];
+            }
+            if (typeof r != "undefined") return ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        }
+
+        function checkContrast(textOrIcon) {
+            if (Math.abs((textOrIcon === 'text' ? color_bright_frame - color_bright_text : color_bright_icon - color_bright_bkg)) < 130) {
+                $('#warn-' + textOrIcon).style.display = 'block';
+            } else {
+                $('#warn-' + textOrIcon).style.display = 'none';
+            }
+        }
+
+        function triggerDownload(imgURI, filename) {
+            let evt = new MouseEvent('click', { view: window, bubbles: false, cancelable: true });
+            let a = document.createElement('a');
+            a.setAttribute('download', filename);
+            a.setAttribute('href', imgURI);
+            a.setAttribute('target', '_blank');
+            a.dispatchEvent(evt);
+        }
+
+        function downloadSvg(el) {
+            let data = (new XMLSerializer()).serializeToString(el);
+            let DOMURL = window.URL || window.webkitURL || window;
+            let img = new Image();
+            let svgBlob = new Blob([data], { type: 'image/svg+xml;charset=utf-8' });
+            let url = DOMURL.createObjectURL(svgBlob);
+            triggerDownload(url, el.querySelector('[data-text]').getAttribute('data-text') + '_button.svg');
+        }
+
+        function downloadPng(el) {
+            let copy = el.cloneNode(true);
+            //copyStylesInline(copy, svg);
+            let canvas = document.createElement("canvas");
+            let bbox = el.getBBox();
+            canvas.width = bbox.width;
+            canvas.height = bbox.height;
+            let ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, bbox.width, bbox.height);
+            let data = (new XMLSerializer()).serializeToString(copy);
+            let DOMURL = window.URL || window.webkitURL || window;
+            let img = new Image();
+            let svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
+            let url = DOMURL.createObjectURL(svgBlob);
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0);
+                DOMURL.revokeObjectURL(url);
+                let imgURI = canvas
+                    .toDataURL("image/png")
+                    .replace("image/png", "image/octet-stream");
+                triggerDownload(imgURI, el.querySelector('[data-text]').getAttribute('data-text') + '_button.png');
+                //document.removeChild(canvas);
+                canvas.remove();
+            };
+            img.src = url;
+        }
     </script>
 
 </head>
@@ -375,28 +427,22 @@ function brightnessByColor(color) {
     <div id="gallery">
         <div style="width:150px;">
             <svg id="btn-square" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
-                <rect id="outside-square" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
-                <rect id="inside-square" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
-                <path id="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
-                <g id="icon-adjust" transform="translate(0,0)">
-                    <path id="button-icon" fill="#555" stroke="none" fill-rule="even-odd" />
-                </g>
+                <rect id="outside-square" class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
+                <rect id="inside-square" class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
+                <path id="button-text" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                <path id="button-icon" class="button-icon" fill="#555" stroke="none" fill-rule="even-odd" />
             </svg>
-            <button id="download-button">Download</button>
-
+            <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
         </div>
 
         <div style="width:200px;">
             <svg id="btn-long" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
-                <rect id="outside-long" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
-                <rect id="inside-long" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
-                <path id="button-long-text" fill="#000" stroke="none" fill-rule="evenodd" />
-                <g id="icon-long-adjust" transform="translate(0,0)">
-                    <path id="button-long-icon" fill="#555" stroke="none" fill-rule="even-odd" />
-                </g>
+                <rect id="outside-long" class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
+                <rect id="inside-long" class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
+                <path id="button-long-text" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                <path id="button-long-icon" class="button-icon" fill="#555" stroke="none" fill-rule="even-odd" />
             </svg>
-            <button id="download-long">Download</button>
-
+            <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
         </div>
     </div>
 
@@ -406,259 +452,455 @@ function brightnessByColor(color) {
     <main>
         <div class="settings settings-color">
             <h2>Appearance</h2>
-            <div class="input-holder">
-                <label>Frame:</label><input type="color" id="color-frame" value="#17B6DE" />
-            </div>
-
-            <div class="input-holder">
-                <label>Background:</label><input type="color" id="color-background" value="#CCF5FF" />
-            </div>
-
-            <div class="input-holder">
-                <label>Icon:</label><input type="color" id="color-icon" value="#555555" />
-            </div>
-
-            <div class="input-holder">
-                <label>Text:</label><input type="color" id="color-text" value="#000000" />
-            </div>
-
-            <div class="input-holder">
-                <label>Corners:</label><input type="number" id="corner-select" value="40" max="60" min="0"
-                class="input-size input" />
-            </div>
-        </div>
-        <div class="settings settings-text">
-            <h2>Text</h2>
-            <div class="input-holder">
-                <label>Font:</label><select id="font-select" class="input select-css"></select>
-            </div>
-
-            <div class="input-holder" style="display:none;">
-                <label>(optional) upload font:</label><input id="font-upload" type="file" class="input" />
-                <button id="font-upload-remove" class="input">Remove</button>
-            </div>
-
-            <div class="input-holder">
-                <label>Variant:</label><select id="font-variant" class="input select-css"></select>
-            </div>
-
-            <div class="input-holder">
-                <label>Text:</label><input type="text" id="input-text" value="Help" class="input-text input" />
-
-            </div>
-            <div class="input-holder">
-                <label>Size:</label><input type="number" id="input-size" value="60" class="input-size input" />
-            </div>
-
-            <div class="input-holder">
-                <label>Width:</label><input type="number" id="input-width" value="100" max="100" min="50"
-                    class="input-size input" />
-            </div>
-
-
-            <div class="input-holder" style="display:none;">
-                <label>union:</label><input type="checkbox" id="input-union" />
-            </div>
-
-            <div class="input-holder" style="display:none;">
-                <label>kerning:</label><input type="checkbox" id="input-kerning" checked />
-            </div>
-
-            <div class="input-holder" style="display:none;">
-                <label>fill:</label><input type="checkbox" id="input-filled" checked />
-            </div>
-
-            <div class="input-holder" style="display:none;">
-                <label>separate characters:</label><input type="checkbox" id="input-separate" />
-            </div>
-
-            <div class="input-holder" style="display:none;">
-                <label>bezier accuracy </label><span
-                    title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span>
-                : <input type="text" id="input-bezier-accuracy" placeholder="auto" class="input" />
-            </div>
-
-            <div class="input-holder" style="display:none;">
-                <label>Dxf Units:</label><select id="dxf-units" class="input select-css"></select>
-            </div>
-
-            <div id="svg-render" style="display:none;"></div>
-
-            <div class="textarea-container" style="display:none;">
-                <textarea id="output-svg" readonly></textarea>
-                <div class="buttons-container" style="display:none;">
-                    <button class="btn" id="copy-to-clipboard-btn">copy to clipboard</button>
-                    <a id="download-btn" class="btn">Download Svg</a>
-                    <a id="create-link" class="btn">Create link</a>
-                    <a id="dxf-btn" class="btn">Download Dxf</a>
-                </div>
-            </div>
-
+            <div class="input-holder"><label>Frame:</label><input type="color" id="color-frame" value="#17B6DE" /><label>Icon:</label><input type="color" id="color-icon" value="#555555" /></div>
+            <div class="input-holder"><label>Background:</label><input type="color" id="color-background" value="#CCF5FF" /><label>Text:</label><input type="color" id="color-text" value="#000000" /></div>
+            <div class="input-holder"><label>Corners:</label><input type="number" id="corner-select" value="40" max="60" min="0" class="input-size input" /></div>
+            <div class="input-holder"><label>Font:</label><select id="font-select" class="input select-css"></select></div>
+            <div class="input-holder"><label>Style:</label><select id="font-variant" class="input select-css"></select></div>
             <div style="margin-left:85px; margin-top: 15px;"><a href="https://fonts.google.com/" target="_blank">Google Fonts (list)</a></div>
         </div>
+
         <div class="settings settings-icon">
+            <h2>Text</h2>
+            <div class="input-holder"><label>Text:</label><input type="text" id="input-text" value="Help" class="input-text input" /></div>
+
             <h2>Icon</h2>
-            <div class="autocomplete">
-                <label>Icon:</label><input id="icon-name" autoComplete="none" type="text" name="icon-name"
-                    value="circle-question">
-            </div>
-
-            <div class="input-holder">
-                <label>Position:</label><input type="number" id="icon-vertical" value="0" class="input-size input" />
-            </div>
-
-            <div class="input-holder">
-                <label>Variant:</label><select id="icon-variant" class="select-css">
-                    <option value="fas">Solid</option>
-                </select>
-            </div>
+            <div class="autocomplete"><label>Icon:</label><input id="icon-name" autoComplete="none" type="text" name="icon-name" value="circle-question"></div>
+            <div class="input-holder"><label>Variant:</label><select id="icon-variant" class="select-css"><option value="fas">Solid</option></select></div>
 
             <div style="margin-left:95px; margin-top: 15px;"><a href="https://fontawesome.com/search?m=free" target="_blank">Font Awesome Icons (list)</a></div>
-            <div style="margin-left:95px; margin-top: 15px;">
-                <strong>Icons to use:</strong><br>
-                Zoom/InSpace: video<br>
-                Counselor: heart<br>
-                Modules: book<br>
-                Recordings: circle-play<br>
-                EDGE Website: school<br>
-                Help/Homework Help: circle-question<br>
-            </div>
         </div>
     </main>
+
+    <hr />
+
+    <div id="required">
+        <div class="required-row">
+            <div style="width:150px;" class="required-button square">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                    <defs>
+                        <linearGradient id="a">
+                            <stop offset="0" stop-color="#4593fd"/>
+                            <stop offset="1" stop-color="#2d74f9"/>
+                        </linearGradient>
+                        <linearGradient xlink:href="#a" id="b" x1="100.5" x2="100.5" y1="72.1" y2="102.1" gradientTransform="translate(7.4)" gradientUnits="userSpaceOnUse"/>
+                    </defs>
+                    <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Zoom" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g transform="translate(-533 -409) scale(6)">
+                        <rect width="29.9" height="30.1" x="94.7" y="72.1" fill="url(#b)" fill-rule="evenodd" ry="9"/>
+                        <path fill="#fff" d="M101.6 82c-.6 0-1.1.5-1.1 1v6.6c0 1.3 1.6 2.8 3 2.8h9c.5 0 1.1-.7 1.1-1.3v-6.3c0-1.3-1.6-2.9-3-2.9zm16.7.2a1 1 0 0 0-.7.3l-2.6 2c-.3.3-.5.7-.5 1v3.3c0 .3.2.6.5.9l2.6 2.2c.4.3 1.2.5 1.2-.4v-8.8c0-.3-.2-.5-.5-.5z"/>
+                    </g>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+
+            <div style="width:200px;" class="required-button long">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                    <defs>
+                        <linearGradient id="a">
+                            <stop offset="0" stop-color="#4593fd"/>
+                            <stop offset="1" stop-color="#2d74f9"/>
+                        </linearGradient>
+                        <linearGradient xlink:href="#a" id="b" x1="100.5" x2="100.5" y1="72.1" y2="102.1" gradientTransform="translate(7.4)" gradientUnits="userSpaceOnUse"/>
+                    </defs>
+                    <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Zoom" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g transform="translate(1 -196.5) scale(3)">
+                        <rect width="29.9" height="30.1" x="94.7" y="72.1" fill="url(#b)" fill-rule="evenodd" ry="9"/>
+                        <path fill="#fff" d="M101.6 82c-.6 0-1.1.5-1.1 1v6.6c0 1.3 1.6 2.8 3 2.8h9c.5 0 1.1-.7 1.1-1.3v-6.3c0-1.3-1.6-2.9-3-2.9zm16.7.2a1 1 0 0 0-.7.3l-2.6 2c-.3.3-.5.7-.5 1v3.3c0 .3.2.6.5.9l2.6 2.2c.4.3 1.2.5 1.2-.4v-8.8c0-.3-.2-.5-.5-.5z"/>
+                    </g>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+
+            <div style="width:150px;" class="required-button square">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                    <defs>
+                        <linearGradient id="a">
+                            <stop offset="0" stop-color="#4593fd"/>
+                            <stop offset="1" stop-color="#2d74f9"/>
+                        </linearGradient>
+                        <linearGradient xlink:href="#a" id="b" x1="567.6" x2="566.8" y1="308.8" y2="349.9" gradientUnits="userSpaceOnUse"/>
+                    </defs>
+                    <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Zoom" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g transform="translate(-771 -409) scale(6)">
+                        <rect width="29.9" height="30.1" x="134.4" y="72.1" fill="#fff" fill-rule="evenodd" stroke="#2d74f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.1" ry="9"/>
+                        <path fill="url(#b)" d="M533.9 309.7c-2 0-4.2 2.3-4.2 4.2v24.6c0 5 6.2 10.6 11.2 10.6H575c2.2 0 4.4-2.6 4.4-4.8v-23.6c0-5.2-6-11-11.2-11zm63 1c-.6 0-1.5.2-2.4 1l-9.9 7.9a5 5 0 0 0-1.9 3.7v12.3c0 1.2 1 2.5 2 3.3l9.8 8.5c1.4 1.2 4.4 1.7 4.4-1.7v-33.3c0-.9-.8-1.7-2-1.8z" transform="scale(.26458)"/>
+                    </g>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+
+            <div style="width:200px;" class="required-button long">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                    <defs>
+                        <linearGradient id="a">
+                            <stop offset="0" stop-color="#4593fd"/>
+                            <stop offset="1" stop-color="#2d74f9"/>
+                        </linearGradient>
+                        <linearGradient xlink:href="#a" id="b" x1="567.6" x2="566.8" y1="308.8" y2="349.9" gradientUnits="userSpaceOnUse"/>
+                    </defs>
+                    <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Zoom" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g transform="translate(-116.5 -196.5) scale(3)">
+                        <rect width="29.9" height="30.1" x="134.4" y="72.1" fill="#fff" fill-rule="evenodd" stroke="#2d74f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.1" ry="9"/>
+                        <path fill="url(#b)" d="M533.9 309.7c-2 0-4.2 2.3-4.2 4.2v24.6c0 5 6.2 10.6 11.2 10.6H575c2.2 0 4.4-2.6 4.4-4.8v-23.6c0-5.2-6-11-11.2-11zm63 1c-.6 0-1.5.2-2.4 1l-9.9 7.9a5 5 0 0 0-1.9 3.7v12.3c0 1.2 1 2.5 2 3.3l9.8 8.5c1.4 1.2 4.4 1.7 4.4-1.7v-33.3c0-.9-.8-1.7-2-1.8z" transform="scale(.26458)"/>
+                    </g>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+        </div>
+
+        <div class="required-row">
+            <div style="width:150px;" class="required-button square">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                    <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <path class="button-icon" fill="#555" stroke="none" fill-rule="even-odd" transform="scale(5.4) translate(10.5,4)" d="M13.2 0c-5.5 0-6 8 0 8s5.5-8 0-8zm-5 8.5a2 2 0 0 0-1.6.7L.9 14.8c-2.5 2.8.9 5.6 3 3.1l2.5-2.5c.7-.7 1.3-.6 1.3.3v4.5c0 .8-.2 1.5-.4 2.2L3.8 31a2.6 2.6 0 0 0 5 1.6L13 21.3l4.3 11.3a2.6 2.6 0 0 0 4.9-1.6l-3.5-8.6c-.2-.7-.4-1.4-.4-2.2v-4.5c0-1 .6-1 1.3-.3l2.6 2.5c2 2.5 5.4-.3 3-3l-5.8-5.7a2 2 0 0 0-1.6-.7zm3.3 2.9c.6 0 1.3.4 1.5 1.4.6-2.8 4.6-1 2.8 1.4L13 17.7l-2.8-3.5c-1.2-1.5 0-2.8 1.3-2.8z"/>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+
+            <div style="width:200px;" class="required-button long">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                    <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <path class="button-icon" fill="#555" stroke="none" fill-rule="even-odd" transform="scale(2.52) translate(119,8.5)" d="M13.2 0c-5.5 0-6 8 0 8s5.5-8 0-8zm-5 8.5a2 2 0 0 0-1.6.7L.9 14.8c-2.5 2.8.9 5.6 3 3.1l2.5-2.5c.7-.7 1.3-.6 1.3.3v4.5c0 .8-.2 1.5-.4 2.2L3.8 31a2.6 2.6 0 0 0 5 1.6L13 21.3l4.3 11.3a2.6 2.6 0 0 0 4.9-1.6l-3.5-8.6c-.2-.7-.4-1.4-.4-2.2v-4.5c0-1 .6-1 1.3-.3l2.6 2.5c2 2.5 5.4-.3 3-3l-5.8-5.7a2 2 0 0 0-1.6-.7zm3.3 2.9c.6 0 1.3.4 1.5 1.4.6-2.8 4.6-1 2.8 1.4L13 17.7l-2.8-3.5c-1.2-1.5 0-2.8 1.3-2.8z"/>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+
+            <div style="width:150px;" class="required-button square">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                    <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <path class="button-icon" fill="#555" stroke="none" fill-rule="even-odd" transform="scale(5.2) translate(11,4)" d="M13.7 0c-3 0-4.8 2.3-4.9 4.6 0 1 .4 2.2 1.2 3 .3.4.8.7 1.2 1H8.7c-.7 0-1.5.1-2 .7L1 15c-1.4 1.5-1.2 3.3-.2 4.2 1 1 2.8 1 4-.4l2.5-2.5.3-.3v4.8c0 .6 0 1.3-.3 2l-3.5 8.6c-.7 1.8.3 3.5 1.7 4.1a3 3 0 0 0 2.4 0c.7-.4 1.4-1 1.8-2.2l3.8-10 3.8 10c.4 1.1 1 1.8 1.8 2.2a3 3 0 0 0 2.4 0 3.1 3.1 0 0 0 1.7-4.1l-3.5-8.7c-.2-.6-.3-1.3-.3-2V16l.3.3 2.6 2.5c1.1 1.4 2.9 1.4 3.9.4 1-.9 1.2-2.7-.2-4.2l-5.7-5.7c-.5-.6-1.3-.8-2-.8H16l1.3-.8c.8-.9 1.1-2 1.1-3.1 0-2.3-1.8-4.5-4.8-4.6zm0 1c2.5.1 3.7 1.9 3.8 3.6 0 .9-.3 1.7-1 2.4-.5.6-1.5 1-2.8 1-1.4 0-2.4-.4-3-1a3 3 0 0 1-.8-2.4c0-1.7 1.3-3.5 3.8-3.5zm-5 8.6h9.6c.4 0 1 .2 1.2.4l5.7 5.7c1.1 1.2.9 2.2.3 2.7-.6.6-1.6.7-2.4-.3l-2.6-2.5c-.4-.4-.8-.8-1.4-.7a1 1 0 0 0-.6.6l-.2.7v4.6c0 .8.1 1.6.4 2.3l3.5 8.7a2 2 0 0 1-1.1 2.7c-.5.2-1 .2-1.5 0s-1-.7-1.3-1.5L14 21.6a.5.5 0 0 0-1 0L8.7 33c-.3.8-.8 1.3-1.3 1.5a2 2 0 0 1-1.5 0 2 2 0 0 1-1.1-2.7L8.3 23c.3-.7.4-1.5.4-2.3v-4.6c0-.2 0-.5-.2-.7a1 1 0 0 0-.6-.6c-.6 0-1 .3-1.4.7L4 18c-1 1-1.9.9-2.5.3-.6-.5-.8-1.5.3-2.7L7.5 10c.2-.3.8-.5 1.2-.5zm3.3 1.8c-.8 0-1.6.4-2 1-.4.8-.4 1.8.3 2.6l2.8 3.5a.5.5 0 0 0 .8 0l2.8-3.5c.5-.6.7-1.4.5-2-.2-.6-.6-1.1-1.2-1.4-.5-.2-1.2-.3-1.8 0a2 2 0 0 0-.8.6c-.4-.5-.9-.8-1.4-.8zm0 1c.4 0 .8.2 1 1a.5.5 0 0 0 1 0c.1-.5.4-.7.6-.9h1c.3.2.5.5.6.8 0 .3 0 .6-.3 1l-2.4 3-2.4-3c-.5-.5-.4-1-.2-1.3.2-.3.7-.5 1-.5z"/>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+
+            <div style="width:200px;" class="required-button long">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                    <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <path class="button-icon" fill="#555" stroke="none" fill-rule="even-odd" transform="scale(2.52) translate(119,8)" d="M13.7 0c-3 0-4.8 2.3-4.9 4.6 0 1 .4 2.2 1.2 3 .3.4.8.7 1.2 1H8.7c-.7 0-1.5.1-2 .7L1 15c-1.4 1.5-1.2 3.3-.2 4.2 1 1 2.8 1 4-.4l2.5-2.5.3-.3v4.8c0 .6 0 1.3-.3 2l-3.5 8.6c-.7 1.8.3 3.5 1.7 4.1a3 3 0 0 0 2.4 0c.7-.4 1.4-1 1.8-2.2l3.8-10 3.8 10c.4 1.1 1 1.8 1.8 2.2a3 3 0 0 0 2.4 0 3.1 3.1 0 0 0 1.7-4.1l-3.5-8.7c-.2-.6-.3-1.3-.3-2V16l.3.3 2.6 2.5c1.1 1.4 2.9 1.4 3.9.4 1-.9 1.2-2.7-.2-4.2l-5.7-5.7c-.5-.6-1.3-.8-2-.8H16l1.3-.8c.8-.9 1.1-2 1.1-3.1 0-2.3-1.8-4.5-4.8-4.6zm0 1c2.5.1 3.7 1.9 3.8 3.6 0 .9-.3 1.7-1 2.4-.5.6-1.5 1-2.8 1-1.4 0-2.4-.4-3-1a3 3 0 0 1-.8-2.4c0-1.7 1.3-3.5 3.8-3.5zm-5 8.6h9.6c.4 0 1 .2 1.2.4l5.7 5.7c1.1 1.2.9 2.2.3 2.7-.6.6-1.6.7-2.4-.3l-2.6-2.5c-.4-.4-.8-.8-1.4-.7a1 1 0 0 0-.6.6l-.2.7v4.6c0 .8.1 1.6.4 2.3l3.5 8.7a2 2 0 0 1-1.1 2.7c-.5.2-1 .2-1.5 0s-1-.7-1.3-1.5L14 21.6a.5.5 0 0 0-1 0L8.7 33c-.3.8-.8 1.3-1.3 1.5a2 2 0 0 1-1.5 0 2 2 0 0 1-1.1-2.7L8.3 23c.3-.7.4-1.5.4-2.3v-4.6c0-.2 0-.5-.2-.7a1 1 0 0 0-.6-.6c-.6 0-1 .3-1.4.7L4 18c-1 1-1.9.9-2.5.3-.6-.5-.8-1.5.3-2.7L7.5 10c.2-.3.8-.5 1.2-.5zm3.3 1.8c-.8 0-1.6.4-2 1-.4.8-.4 1.8.3 2.6l2.8 3.5a.5.5 0 0 0 .8 0l2.8-3.5c.5-.6.7-1.4.5-2-.2-.6-.6-1.1-1.2-1.4-.5-.2-1.2-.3-1.8 0a2 2 0 0 0-.8.6c-.4-.5-.9-.8-1.4-.8zm0 1c.4 0 .8.2 1 1a.5.5 0 0 0 1 0c.1-.5.4-.7.6-.9h1c.3.2.5.5.6.8 0 .3 0 .6-.3 1l-2.4 3-2.4-3c-.5-.5-.4-1-.2-1.3.2-.3.7-.5 1-.5z"/>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+        </div>
+
+        <div class="required-row">
+            <div style="width:150px;" class="required-button square">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                    <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="InSpace" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g stroke-linecap="round" stroke-linejoin="round" transform="translate(-1725 -2020) scale(17)">
+                        <ellipse cx="108.8" cy="125.6" fill="none" fill-rule="evenodd" stroke="#00c7d2" stroke-width=".8" rx="4.9" ry="5"/>
+                        <ellipse cx="109.7" cy="125.6" fill="none" stroke="#18a9ff" stroke-width=".5" rx="3.4" ry="3.5"/>
+                        <circle cx="110.6" cy="125.6" r="2.1" fill="none" stroke="#4f33ff" stroke-width=".4"/>
+                        <circle cx="111.4" cy="125.7" r=".9" fill="none" stroke="#2d0479" stroke-width=".3"/>
+                    </g>
+                    </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+
+            <div style="width:200px;" class="required-button long">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                    <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="InSpace" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g stroke-linecap="round" stroke-linejoin="round" transform="translate(-593 -1002) scale(8.5)">
+                        <ellipse cx="108.8" cy="125.6" fill="none" fill-rule="evenodd" stroke="#00c7d2" stroke-width=".8" rx="4.9" ry="5"/>
+                        <ellipse cx="109.7" cy="125.6" fill="none" stroke="#18a9ff" stroke-width=".5" rx="3.4" ry="3.5"/>
+                        <circle cx="110.6" cy="125.6" r="2.1" fill="none" stroke="#4f33ff" stroke-width=".4"/>
+                        <circle cx="111.4" cy="125.7" r=".9" fill="none" stroke="#2d0479" stroke-width=".3"/>
+                    </g>
+                </svg>
+                <button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button><button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button>
+            </div>
+        </div>
+
+    </div>
+    <div id="premade"></div>
     <input id="dummy" name="dummy" type="hidden">
 
-
     <script>
-        document.getElementById('color-frame').addEventListener('change', (e) => {
-            document.getElementById('outside-square').setAttribute('fill', e.target.value);
-            document.getElementById('outside-long').setAttribute('fill', e.target.value);
+        $('#color-frame').addEventListener('change', (e) => {
+            $$('.button-frame').forEach(el => { el.setAttribute('fill', e.target.value); });
             color_bright_frame = brightnessByColor(e.target.value);
-            if (Math.abs(color_bright_frame - color_bright_text) < 130) {
-                document.getElementById('warn-text').style.display = 'block';
-            } else {
-                document.getElementById('warn-text').style.display = 'none';
-            }
+            checkContrast('text');
         });
-        document.getElementById('color-background').addEventListener('change', (e) => {
-            document.getElementById('inside-square').setAttribute('fill', e.target.value);
-            document.getElementById('inside-long').setAttribute('fill', e.target.value);
+        $('#color-background').addEventListener('change', (e) => {
+            $$('.button-window').forEach(el => { el.setAttribute('fill', e.target.value); });
             color_bright_bkg = brightnessByColor(e.target.value);
-            if (Math.abs(color_bright_icon - color_bright_bkg) < 130) {
-                document.getElementById('warn-icon').style.display = 'block';
-            } else {
-                document.getElementById('warn-icon').style.display = 'none';
-            }
+            checkContrast('icon');
         });
-        document.getElementById('color-icon').addEventListener('change', (e) => {
-            document.getElementById('button-icon').setAttribute('fill', e.target.value);
-            document.getElementById('button-long-icon').setAttribute('fill', e.target.value);
+        $('#color-icon').addEventListener('change', (e) => {
+            $$('.button-icon').forEach(el => { el.setAttribute('fill', e.target.value); });
             color_bright_icon = brightnessByColor(e.target.value);
-            if (Math.abs(color_bright_icon - color_bright_bkg) < 130) {
-                document.getElementById('warn-icon').style.display = 'block';
-            } else {
-                document.getElementById('warn-icon').style.display = 'none';
-            }
+            checkContrast('icon');
         });
-        document.getElementById('color-text').addEventListener('change', (e) => {
-            document.getElementById('button-text').setAttribute('fill', e.target.value);
-            document.getElementById('button-long-text').setAttribute('fill', e.target.value);
+        $('#color-text').addEventListener('change', (e) => {
+            $$('.button-text').forEach(el => { el.setAttribute('fill', e.target.value); });
             color_bright_text = brightnessByColor(e.target.value);
-            if (Math.abs(color_bright_frame - color_bright_text) < 130) {
-                document.getElementById('warn-text').style.display = 'block';
-            } else {
-                document.getElementById('warn-text').style.display = 'none';
-            }
+            checkContrast('text');
+        });
+        $('#icon-variant').addEventListener('change', (e) => {
+            iconGenerated($('#icon-name').value, e.target.value);
         });
 
-        document.getElementById('icon-vertical').addEventListener('change', (e) => {
-            document.getElementById('icon-adjust').setAttribute('transform',
-                `translate(0,${e.target.value * -1})`);
-                document.getElementById('icon-long-adjust').setAttribute('transform',
-                `translate(0,${e.target.value * -0.5})`);
+        $('#corner-select').addEventListener('change', (e) => {
+            $$('.button-frame').forEach(el => { el.setAttribute('ry', e.target.value); });
+            $$('.button-window').forEach(el => { el.setAttribute('ry', e.target.value * 0.625); });
         });
 
-        document.getElementById('input-width').addEventListener('change', (e) => {
-            textGenerated(null, e.target.value / 100);
-        });
+        $('#font-select').addEventListener('change', buildPremade);
+        $('#font-variant').addEventListener('change', buildPremade);
+
+        function buildPremade() {
+            removeAllChildNodes($('#premade'));
+            setTimeout(() => {
+
+                requiredAddText();
+
+                [
+                    //{text: 'Zoom', icon: 'video'},
+                    //{text: 'Counselor', icon: 'heart'},
+                    {text: 'Modules', icon: 'book'},
+                    {text: 'Recordings', icon: 'circle-play'},
+                    {text: 'EDGE Website', icon: 'school'},
+                    {text: 'Homework Help', icon: 'circle-question'}
+                ].forEach(b => {
+                    let rowDiv = document.createElement('div');
+                    rowDiv.classList.add('premade-row');
+                    $('#premade').appendChild(rowDiv);
+                    generateButton(1, b.text, $('#font-select').value, $('#font-variant').value, b.icon, 'fas', rowDiv);
+                    setTimeout(() => {generateButton(0.5, b.text, $('#font-select').value, $('#font-variant').value, b.icon, 'fas', rowDiv);}, 100);
+                });
+            }, 1000);
+        }
+
+        // size = 1 (large) or 0.5 (small)
+        function generateButton(size, text, font, variant, icon, prefix, target) {
+            let iconSVG = getIconSVG(icon, prefix, size);
+
+            let containerDiv = document.createElement('div');
+            containerDiv.classList.add('generated-button');
+            containerDiv.style.width = (size === 1 ? '150px' : '200px');
+
+            let svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            const svgns = "http://www.w3.org/2000/svg";
+
+            containerDiv.appendChild(svgElement);
+            svgElement.setAttribute('viewBox', (size === 1 ? '0 0 250 300' : '0 0 400 130'));
+
+            let frameElement = document.createElementNS(svgns, 'rect');
+            svgElement.appendChild(frameElement);
+            frameElement.classList.add('button-frame');
+            frameElement.setAttribute('x', '0');
+            frameElement.setAttribute('y', '0');
+            frameElement.setAttribute('width', (size === 1 ? '250' : '400'));
+            frameElement.setAttribute('height', (size === 1 ? '300' : '130'));
+            frameElement.setAttribute('fill', $('#color-frame').value);
+            frameElement.setAttribute('ry', $('#corner-select').value);
+
+            let windowElement = document.createElementNS(svgns, 'rect');
+            svgElement.appendChild(windowElement);
+            windowElement.classList.add('button-window');
+            windowElement.setAttribute('x', (size === 1 ? '15' : '275'));
+            windowElement.setAttribute('y', '15');
+            windowElement.setAttribute('width', (size === 1 ? '220' : '110'));
+            windowElement.setAttribute('height', (size === 1 ? '200' : '100'));
+            windowElement.setAttribute('fill', $('#color-background').value);
+            windowElement.setAttribute('ry', parseInt($('#corner-select').value) * 0.625);
+
+            let iconElement = document.createElementNS(svgns, 'path');
+            svgElement.appendChild(iconElement);
+            iconElement.classList.add('button-icon');
+            iconElement.setAttribute('stroke', 'none');
+            iconElement.setAttribute('fill-rule', 'evenodd');
+            iconElement.setAttribute('fill', $('#color-icon').value);
+            iconElement.setAttribute('d', iconSVG);
+            setTimeout(() => {
+                let iconBox = iconElement.getBBox();
+                let iconLeft = ((size === 1 ? 250 : 665) - iconBox.width) / 2;
+                let iconTop = (size === 1 ? 111 : 65) - ((iconBox.height + iconBox.y) / 2);
+                iconElement.setAttribute('transform', `translate(${iconLeft},${iconTop})`);
+            }, 250);
+
+            let textElement = document.createElementNS(svgns, 'path');
+            svgElement.appendChild(textElement);
+            textElement.classList.add('button-text');
+            textElement.setAttribute('data-text', text);
+            textElement.setAttribute('stroke', 'none');
+            textElement.setAttribute('fill-rule', 'evenodd');
+            textElement.setAttribute('fill', $('#color-text').value);
+
+            app.build(font, variant, text, (textSVG) => {
+                textSVG = textSVG.replace(/<svg.*? d="(.*?)".*?<\/svg>/, '$1');
+                textElement.setAttribute('d', textSVG);
+
+                let squeeze = 1;
+                let squish = 1;
+
+                setTimeout(() => {
+                    let textBox = textElement.getBBox();
+                    if (textBox.width > (size === 1 ? 220 : 252)) {
+                        squeeze = (size === 1 ? 220 : 252) / textBox.width;
+                        if (squeeze < 0.7) {
+                            squish = squeeze + 0.3;
+                        }
+                    }
+                    let textLeft = ((size === 1 ? 250 : 272.5) - (textBox.width * squeeze)) / 2;
+                    let textTop = (size === 1 ? 257.5 : 65) - (textBox.height * squish / 2);
+                    textElement.setAttribute('transform',
+                        `translate(${textLeft},${textTop}) scale(${squeeze},${squish})`);
+                }, 250);
+                target.appendChild(containerDiv);
+            });
+
+            let buttonElement = document.createElement('button');
+            buttonElement.setAttribute('onclick', 'downloadSvg(this.parentElement.firstElementChild);');
+            buttonElement.classList.add('button-css');
+            buttonElement.classList.add('button');
+            buttonElement.innerHTML = '&#x1f4be; SVG';
+            containerDiv.appendChild(buttonElement);
+
+            buttonElement = document.createElement('button');
+            buttonElement.setAttribute('onclick', 'downloadPng(this.parentElement.firstElementChild);');
+            buttonElement.classList.add('button-css');
+            buttonElement.classList.add('button');
+            buttonElement.innerHTML = '&#x1f4be; PNG';
+            containerDiv.appendChild(buttonElement);
+        }
+
+        function requiredAddText() {
+            $$('.required-button').forEach(e => {
+
+                let textElement = e.getElementsByClassName('button-text')[0]
+                let text = textElement.getAttribute('data-text');
+                textElement.setAttribute('fill', $('#color-text').value);
+                let size = (e.classList.contains('square') ? 1 : 0.5);
+
+                app.build($('#font-select').value, $('#font-variant').value, text, (textSVG) => {
+                    textSVG = textSVG.replace(/<svg.*? d="(.*?)".*?<\/svg>/, '$1');
+                    textElement.setAttribute('d', textSVG);
+
+                    let squeeze = 1;
+                    let squish = 1;
+
+                    setTimeout(() => {
+                        let textBox = textElement.getBBox();
+                        if (textBox.width > (size === 1 ? 220 : 252)) {
+                            squeeze = (size === 1 ? 220 : 252) / textBox.width;
+                            if (squeeze < 0.7) {
+                                squish = squeeze + 0.3;
+                            }
+                        }
+                        let textLeft = ((size === 1 ? 250 : 272.5) - (textBox.width * squeeze)) / 2;
+                        let textTop = (size === 1 ? 257.5 : 65) - (textBox.height * squish / 2);
+                        textElement.setAttribute('transform',
+                            `translate(${textLeft},${textTop}) scale(${squeeze},${squish})`);
+                    }, 250);
+                });
+            });
+
+        }
+
+        function getIconSVG(icon, prefix, size) { // size = 1 (large) or 0.5 (small)
+            let svg_icon = FontAwesome.findIconDefinition({
+                iconName: icon,
+                prefix: prefix || 'fas'
+            });
+            let svg_icon_svg = svg_icon.icon[4]
+                .replace(/-/g, ' -')
+                .replace(/([0-9\.\-]+)/gi, (m) => {
+                    return (parseFloat(m) * 0.3 * (size || 1)).toFixed(2)
+                });
+            return svg_icon_svg
+        }
 
 
-        document.getElementById('corner-select').addEventListener('change', (e) => {
-            document.getElementById('outside-square').setAttribute('ry', e.target.value);
-            document.getElementById('inside-square').setAttribute('ry', e.target.value * 0.625);
+        /* old functions */
 
-            document.getElementById('outside-long').setAttribute('ry', e.target.value);
-            document.getElementById('inside-long').setAttribute('ry', e.target.value * 0.625);
-        });
-
-        function textGenerated(svg, squeeze) {
-            if (!squeeze) {
-                squeeze = textCompress;
-            } else {
-                textCompress = squeeze;
-            }
+        function textGenerated(svg) {
+            let squeeze = 1;
+            let squish = 1;
 
             let svg_path = '';
             if (svg) {
                 svg_path = svg.replace(/<svg.*? d="(.*?)".*?<\/svg>/, '$1');
-                document.getElementById('button-text').setAttribute('d', svg_path);
-                document.getElementById('button-long-text').setAttribute('d', svg_path);
+                $('#button-text').setAttribute('d', svg_path);
+                $('#button-long-text').setAttribute('d', svg_path);
+                $('#button-text').setAttribute('data-text', $('#input-text').value);
+                $('#button-long-text').setAttribute('data-text', $('#input-text').value);
+                $('#input-text').value
             }
 
-            let svg_path_box = document.getElementById('button-text').getBBox();
+            let svg_path_box = $('#button-text').getBBox();
+            if (svg_path_box.width > 220) {
+                squeeze = 220 / svg_path_box.width;
+                if (squeeze < 0.7) {
+                    squish = squeeze + 0.3;
+                }
+            }
             let left_pos = (250 - (svg_path_box.width * squeeze)) / 2;
-            let top_pos = 257.5 - (svg_path_box.height / 2);
-            document.getElementById('button-text').setAttribute('transform',
-                `translate(${left_pos},${top_pos}) scale(${squeeze},1.0)`);
+            let top_pos = 257.5 - (svg_path_box.height * squish / 2);
+            $('#button-text').setAttribute('transform',
+                `translate(${left_pos},${top_pos}) scale(${squeeze},${squish})`);
 
-            svg_path_box = document.getElementById('button-long-text').getBBox();
+
+            svg_path_box = $('#button-long-text').getBBox();
+            if (svg_path_box.width > 252) {
+                squeeze = 252 / svg_path_box.width;
+                if (squeeze < 0.7) {
+                    squish = squeeze + 0.3;
+                }
+            }
             left_pos = (272.5 - (svg_path_box.width * squeeze)) / 2;
-            top_pos = 65 - (svg_path_box.height / 2);
-            document.getElementById('button-long-text').setAttribute('transform',
-                `translate(${left_pos},${top_pos}) scale(${squeeze},1.0)`);
+            top_pos = 65 - (svg_path_box.height * squish / 2);
+            $('#button-long-text').setAttribute('transform',
+                `translate(${left_pos},${top_pos}) scale(${squeeze},${squish})`);
         }
 
         function iconGenerated(icon, prefix) {
+            if (icon === 'none' || icon === 'blank') {
+                $('#button-icon').setAttribute('d', '');
+                $('#button-long-icon').setAttribute('d', '');
+                return;
+            }
+
             let svg_icon = FontAwesome.findIconDefinition({
                 iconName: icon
             });
 
-            let icon_styles = [{
-                    short: 'fab',
-                    long: 'Brands'
-                },
-                {
-                    short: 'fad',
-                    long: 'Duotone'
-                },
-                {
-                    short: 'fal',
-                    long: 'Light'
-                },
-                {
-                    short: 'far',
-                    long: 'Regular'
-                },
-                {
-                    short: 'fas',
-                    long: 'Solid'
-                },
-                {
-                    short: 'fat',
-                    long: 'Thick'
-                }
+            let icon_styles = [
+                { short: 'fab', long: 'Brands' },
+                { short: 'fad', long: 'Duotone' },
+                { short: 'fal', long: 'Light' },
+                { short: 'far', long: 'Regular' },
+                { short: 'fas', long: 'Solid' },
+                { short: 'fat', long: 'Thick' }
             ];
 
             if (last_icon !== icon) {
                 options = [{
                     short: svg_icon.prefix,
-                    long: icon_styles.filter((v) => {
-                        return (v.short === svg_icon.prefix)
-                    })[0].long
+                    long: icon_styles.filter((v) => { return (v.short === svg_icon.prefix) })[0].long
                 }];
-                document.getElementById('icon-variant').innerHTML =
-                    `<option value="${options[0].short}">${options[0].long}</option>`
+                $('#icon-variant').innerHTML = `<option value="${options[0].short}">${options[0].long}</option>`
 
-                //if (!prefix) {
                 icon_styles.forEach((e) => {
                     if (e.short != options[0].short) {
                         let option_check = FontAwesome.findIconDefinition({
@@ -667,12 +909,10 @@ function brightnessByColor(color) {
                         });
                         if (option_check) {
                             options.push(e);
-                            document.getElementById('icon-variant').innerHTML +=
-                                `<option value="${e.short}">${e.long}</option>`
+                            $('#icon-variant').innerHTML += `<option value="${e.short}">${e.long}</option>`
                         }
                     }
                 });
-                //}
 
                 last_icon = icon;
             }
@@ -687,85 +927,33 @@ function brightnessByColor(color) {
                 }
             }
 
-            let svg_icon_lg = svg_icon.icon[4]
-                .replace(/-/g, ' -')
-                .replace(/([0-9\.\-]+)/gi, (m) => {
-                    return (parseFloat(m) * 0.3).toFixed(2)
-                });
+            let svg_icon_lg = svg_icon.icon[4].replace(/-/g, ' -')
+                .replace(/([0-9\.\-]+)/gi, (m) => { return (parseFloat(m) * 0.3).toFixed(2) });
 
-
-            document.getElementById('button-icon').setAttribute('d', svg_icon_lg);
-            let svg_icon_box = document.getElementById('button-icon').getBBox();
+            $('#button-icon').setAttribute('d', svg_icon_lg);
+            let svg_icon_box = $('#button-icon').getBBox();
             let left_pos = (250 - svg_icon_box.width) / 2;
-            let top_pos = 107.5 - (svg_icon_box.height / 2);
-            document.getElementById('button-icon').setAttribute('transform', `translate(${left_pos },${top_pos})`);
+            let top_pos = 112.5 - ((svg_icon_box.height + svg_icon_box.y) / 2);
+            $('#button-icon').setAttribute('transform', `translate(${left_pos},${top_pos})`);
 
-            let svg_icon_sm = svg_icon.icon[4]
-                .replace(/-/g, ' -')
-                .replace(/([0-9\.\-]+)/gi, (m) => {
-                    return (parseFloat(m) * 0.15).toFixed(2)
-                });
+            let svg_icon_sm = svg_icon.icon[4].replace(/-/g, ' -')
+                .replace(/([0-9\.\-]+)/gi, (m) => { return (parseFloat(m) * 0.15).toFixed(2) });
 
-            document.getElementById('button-long-icon').setAttribute('d', svg_icon_sm);
-            svg_icon_box = document.getElementById('button-long-icon').getBBox();
-            left_pos = 332.5 - (svg_icon_box.width / 2);
-            top_pos = 65 - (svg_icon_box.height / 2);
-            document.getElementById('button-long-icon').setAttribute('transform', `translate(${left_pos },${top_pos})`);
+            $('#button-long-icon').setAttribute('d', svg_icon_sm);
+            svg_icon_box = $('#button-long-icon').getBBox();
+            left_pos = 331 - (svg_icon_box.width / 2);
+            top_pos = 65 - ((svg_icon_box.height + svg_icon_box.y) / 2);
+            $('#button-long-icon').setAttribute('transform', `translate(${left_pos},${top_pos})`);
         }
 
-        autocomplete(document.getElementById("icon-name"), iconList, iconGenerated);
-
-        document.getElementById("icon-variant").addEventListener('change', (e) => {
-            iconGenerated(document.getElementById("icon-name").value, e.target.value);
-        });
-
+        autocomplete($('#icon-name'), iconList, iconGenerated);
         iconGenerated('circle-question');
+        buildPremade();
 
-
-
-        function triggerDownload(imgURI, filename) {
-            let evt = new MouseEvent('click', {
-                view: window,
-                bubbles: false,
-                cancelable: true
-            });
-
-            let a = document.createElement('a');
-            a.setAttribute('download', filename);
-            a.setAttribute('href', imgURI);
-            a.setAttribute('target', '_blank');
-
-            a.dispatchEvent(evt);
-        }
-
-        document.getElementById('download-button').addEventListener('click', function () {
-            let data = (new XMLSerializer()).serializeToString(document.getElementById('btn-square'));
-            let DOMURL = window.URL || window.webkitURL || window;
-
-            let img = new Image();
-            let svgBlob = new Blob([data], {
-                type: 'image/svg+xml;charset=utf-8'
-            });
-            let url = DOMURL.createObjectURL(svgBlob);
-            triggerDownload(url, document.getElementById('input-text').value + 'button_square.svg');
-        });
-
-        document.getElementById('download-long').addEventListener('click', function () {
-            let data = (new XMLSerializer()).serializeToString(document.getElementById('btn-long'));
-            let DOMURL = window.URL || window.webkitURL || window;
-
-            let img = new Image();
-            let svgBlob = new Blob([data], {
-                type: 'image/svg+xml;charset=utf-8'
-            });
-            let url = DOMURL.createObjectURL(svgBlob);
-            triggerDownload(url, document.getElementById('input-text').value + 'button_long.svg');
-        });
-
-        color_bright_frame = brightnessByColor(document.getElementById('color-frame').value);
-        color_bright_bkg = brightnessByColor(document.getElementById('color-background').value);
-        color_bright_icon = brightnessByColor(document.getElementById('color-icon').value);
-        color_bright_text = brightnessByColor(document.getElementById('color-text').value);
+        color_bright_frame = brightnessByColor($('#color-frame').value);
+        color_bright_bkg = brightnessByColor($('#color-background').value);
+        color_bright_icon = brightnessByColor($('#color-icon').value);
+        color_bright_text = brightnessByColor($('#color-text').value);
     </script>
 </body>
 
