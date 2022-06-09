@@ -15113,13 +15113,15 @@
                     {text: 'Modules', icon: 'book'},
                     {text: 'Recordings', icon: 'circle-play'},
                     {text: 'EDGE Website', icon: 'school'},
-                    {text: 'Homework Help', icon: 'circle-question'}
+                    {text: 'Homework Help', icon: 'circle-question'},
+                    {text: 'Clubs', icon: 'icons'},
+                    {text: 'Social Lunch', icon: 'mug-hot'}
                 ].forEach(b => {
                     let rowDiv = document.createElement('div');
                     rowDiv.classList.add('premade-row');
                     $('#premade').appendChild(rowDiv);
-                    generateButton(1, b.text, $('#font-select').value, $('#font-variant').value, b.icon, 'fas', rowDiv);
-                    setTimeout(() => {generateButton(0.5, b.text, $('#font-select').value, $('#font-variant').value, b.icon, 'fas', rowDiv);}, 100);
+                    setTimeout(() => {generateButton(1, b.text, $('#font-select').value, $('#font-variant').value, b.icon, 'fas', rowDiv);}, 100);
+                    setTimeout(() => {generateButton(0.5, b.text, $('#font-select').value, $('#font-variant').value, b.icon, 'fas', rowDiv);}, 500);
                 });
             }, 1000);
         }
