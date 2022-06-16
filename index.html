@@ -34,6 +34,9 @@
             font-size: 20px;
         }
 
+        input[type=checkbox] {
+            transform: scale(2);
+        }
 
         .settings-color label {
             width: 130px;
@@ -14806,6 +14809,12 @@
             } else {
                 $('#warn-' + textOrIcon).style.display = 'none';
             }
+
+            if (color_bright_frame > 130 && $('#border-select').checked === false) {
+                $('#warn-bkg').style.display = 'block';
+            } else {
+                $('#warn-bkg').style.display = 'none';
+            }
         }
 
         function triggerDownload(imgURI, filename) {
@@ -14859,7 +14868,7 @@
 <body>
     <div id="gallery">
         <div style="width:150px;">
-            <svg id="btn-square" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+            <svg id="btn-square" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 270 320">
                 <rect id="outside-square" class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
                 <rect id="inside-square" class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
                 <path id="button-text" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -14869,7 +14878,7 @@
         </div>
 
         <div style="width:200px;">
-            <svg id="btn-long" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+            <svg id="btn-long" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 420 150">
                 <rect id="outside-long" class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
                 <rect id="inside-long" class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
                 <path id="button-long-text" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -14881,12 +14890,14 @@
 
     <div id="warn-text" class="warn-color"><i class="fa-solid fa-triangle-exclamation"></i> Not enough color contrast between text and frame!</div>
     <div id="warn-icon" class="warn-color"><i class="fa-solid fa-triangle-exclamation"></i> Not enough color contrast between icon and background!</div>
+    <div id="warn-bkg" class="warn-color"><i class="fa-solid fa-triangle-exclamation"></i> Not enough color between button and page background! Use the <b>Border</b> checkbox.</div>
 
     <main>
         <div class="settings settings-color">
             <h2>Appearance</h2>
             <div class="input-holder"><label>Frame:</label><input type="color" id="color-frame" value="#17B6DE" /><label>Icon:</label><input type="color" id="color-icon" value="#555555" /></div>
             <div class="input-holder"><label>Background:</label><input type="color" id="color-background" value="#CCF5FF" /><label>Text:</label><input type="color" id="color-text" value="#000000" /></div>
+            <div class="input-holder" style="margin: 10px 0px;"><label>Border:</label><input type="checkbox" id="border-select" class="input-size input" /></div>
             <div class="input-holder"><label>Corners:</label><input type="number" id="corner-select" value="40" max="60" min="0" class="input-size input" /></div>
             <div class="input-holder"><label>Font:</label><select id="font-select" class="input select-css"></select></div>
             <div class="input-holder"><label>Style:</label><select id="font-variant" class="input select-css"></select></div>
@@ -14910,7 +14921,7 @@
     <div id="required">
         <div class="required-row">
             <div style="width:150px;" class="required-button square">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 270 320">
                     <defs>
                         <linearGradient id="a">
                             <stop offset="0" stop-color="#4593fd"/>
@@ -14930,7 +14941,7 @@
             </div>
 
             <div style="width:200px;" class="required-button long">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 420 150">
                     <defs>
                         <linearGradient id="a">
                             <stop offset="0" stop-color="#4593fd"/>
@@ -14950,7 +14961,7 @@
             </div>
 
             <div style="width:150px;" class="required-button square">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 270 320">
                     <defs>
                         <linearGradient id="a">
                             <stop offset="0" stop-color="#4593fd"/>
@@ -14970,7 +14981,7 @@
             </div>
 
             <div style="width:200px;" class="required-button long">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 420 150">
                     <defs>
                         <linearGradient id="a">
                             <stop offset="0" stop-color="#4593fd"/>
@@ -14992,7 +15003,7 @@
 
         <div class="required-row">
             <div style="width:150px;" class="required-button square">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 270 320">
                     <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
                     <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
                     <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -15002,7 +15013,7 @@
             </div>
 
             <div style="width:200px;" class="required-button long">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 420 150">
                     <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
                     <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
                     <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -15012,7 +15023,7 @@
             </div>
 
             <div style="width:150px;" class="required-button square">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 270 320">
                     <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
                     <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
                     <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -15022,7 +15033,7 @@
             </div>
 
             <div style="width:200px;" class="required-button long">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 420 150">
                     <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
                     <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
                     <path data-text="Counselor" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -15034,7 +15045,7 @@
 
         <div class="required-row">
             <div style="width:150px;" class="required-button square">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 270 320">
                     <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
                     <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
                     <path data-text="InSpace" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -15049,7 +15060,7 @@
             </div>
 
             <div style="width:200px;" class="required-button long">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 420 150">
                     <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
                     <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
                     <path data-text="InSpace" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
@@ -15063,6 +15074,56 @@
                 <button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button><button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button>
             </div>
         </div>
+        <div class="required-row">
+            <div style="width:150px;" class="required-button square">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 270 320">
+                    <rect class="button-frame" width="250" height="300" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="220" height="200" x="15" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Social Lunch" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g transform="translate(-93 -198) scale(2.1)">
+                        <path fill="#f4d87f" stroke="#000" stroke-linejoin="round" stroke-width="2.6" d="m110.3 144.1 2.7 47c.1 1 1.1 2.2 2.1 2.2l24.9-.2c.9 0 2-.8 2-1.7l2.6-47.5z"/>
+                        <path fill="#acb1bc" d="m112.9 186 .6 6 1.9 1.3 25.2.2 1.7-2.3.2-5.4z"/>
+                        <path fill="#c7a07c" d="m92.6 175.7-26.4.1-1.2-.8v-5.6c0-4.6 4.5-8 8-8h25c4.2 0 7.5 4.5 7.5 7.8v6.5h-7.4l3.4.1c4.9.1 6.7 8.4.4 8.5l-24.3.2 26.7-.2c1 0 1.6.6 1.5 1.9-.4 3.9-2.5 7.1-6.5 7H71.6c-3.5 0-6.8-3.6-6.8-7.2 0 0 .6-1.3 1.5-1.4h6.1l-3.6-.1c-5.7-.1-6-8.7.7-8.7z"/>
+                        <ellipse cx="85.8" cy="130.5" fill="#bdda8b" fill-rule="evenodd" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" rx="25.2" ry="25.6"/>
+                        <ellipse cx="85.8" cy="130.4" fill="#fff" fill-rule="evenodd" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" rx="19" ry="18.7"/>
+                        <path fill="none" stroke="#000" stroke-width="2.6" d="M85.3 111.8v6.3m12.5 12.7h6.5m-37.4 0h5.6m13 13v5.4m-.2-24.2v6H89"/>
+                        <path fill="#acb1bc" stroke="#000" stroke-linejoin="round" stroke-width="2.6" d="m147.3 141.5.2 5.4h-39.7V141z"/>
+                        <ellipse cx="127.3" cy="167.3" fill="#fff" fill-rule="evenodd" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" rx="10.7" ry="10.8"/>
+                        <path fill="none" stroke="#000" stroke-width="2.6" d="M122.9 164.7h9.4m-9.4 4.7h9.4m-4.6-28.4 4.6-20.4 12.3.2"/>
+                        <path fill="#c77c83" d="m66.2 175.8-1.5 4.2 1.6 4.5 38-.3 1.6-3.8-2.4-4.8z"/>
+                        <path fill="none" stroke="#000" stroke-linejoin="round" stroke-width="2.6" d="m92.6 175.7-26.4.1-1.2-.8v-5.6c0-4.6 4.5-8 8-8h25c4.2 0 7.5 4.5 7.5 7.8v6.5h-7.4l3.4.1c4.9.1 6.7 8.4.4 8.5l-24.3.2 26.7-.2c1 0 1.6.6 1.5 1.9-.4 3.9-2.5 7.1-6.5 7H71.6c-3.5 0-6.8-3.6-6.8-7.2 0 0 .6-1.3 1.5-1.4h6.1l-3.6-.1c-5.7-.1-6-8.7.7-8.7z"/>
+                        <path fill="none" stroke="#000" stroke-linecap="square" stroke-width="2.6" d="M78.2 166.8v.7m7.3 2.2v.6m7.2-3.5v.7"/>
+                        <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M127.6 186h14.7l-.2 5.6c0 .7-.9 1.4-1.6 1.4l-25.7.2c-.6 0-1.5-.5-1.5-1.2l-.4-6h9.4"/>
+                    </g>
+                </svg>
+                <button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button><button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button>
+            </div>
+
+            <div style="width:200px;" class="required-button long">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 420 150">
+                    <rect class="button-frame" width="400" height="130" x="0" y="0" fill="#17B6DE" ry="40" />
+                    <rect class="button-window" width="110" height="100" x="275" y="15" fill="#CCF5FF" ry="25" />
+                    <path data-text="Social Lunch" class="button-text" fill="#000" stroke="none" fill-rule="evenodd" />
+                    <g transform="translate(226 -85)">
+                        <path fill="#f4d87f" stroke="#000" stroke-linejoin="round" stroke-width="2.6" d="m110.3 144.1 2.7 47c.1 1 1.1 2.2 2.1 2.2l24.9-.2c.9 0 2-.8 2-1.7l2.6-47.5z"/>
+                        <path fill="#acb1bc" d="m112.9 186 .6 6 1.9 1.3 25.2.2 1.7-2.3.2-5.4z"/>
+                        <path fill="#c7a07c" d="m92.6 175.7-26.4.1-1.2-.8v-5.6c0-4.6 4.5-8 8-8h25c4.2 0 7.5 4.5 7.5 7.8v6.5h-7.4l3.4.1c4.9.1 6.7 8.4.4 8.5l-24.3.2 26.7-.2c1 0 1.6.6 1.5 1.9-.4 3.9-2.5 7.1-6.5 7H71.6c-3.5 0-6.8-3.6-6.8-7.2 0 0 .6-1.3 1.5-1.4h6.1l-3.6-.1c-5.7-.1-6-8.7.7-8.7z"/>
+                        <ellipse cx="85.8" cy="130.5" fill="#bdda8b" fill-rule="evenodd" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" rx="25.2" ry="25.6"/>
+                        <ellipse cx="85.8" cy="130.4" fill="#fff" fill-rule="evenodd" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" rx="19" ry="18.7"/>
+                        <path fill="none" stroke="#000" stroke-width="2.6" d="M85.3 111.8v6.3m12.5 12.7h6.5m-37.4 0h5.6m13 13v5.4m-.2-24.2v6H89"/>
+                        <path fill="#acb1bc" stroke="#000" stroke-linejoin="round" stroke-width="2.6" d="m147.3 141.5.2 5.4h-39.7V141z"/>
+                        <ellipse cx="127.3" cy="167.3" fill="#fff" fill-rule="evenodd" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" rx="10.7" ry="10.8"/>
+                        <path fill="none" stroke="#000" stroke-width="2.6" d="M122.9 164.7h9.4m-9.4 4.7h9.4m-4.6-28.4 4.6-20.4 12.3.2"/>
+                        <path fill="#c77c83" d="m66.2 175.8-1.5 4.2 1.6 4.5 38-.3 1.6-3.8-2.4-4.8z"/>
+                        <path fill="none" stroke="#000" stroke-linejoin="round" stroke-width="2.6" d="m92.6 175.7-26.4.1-1.2-.8v-5.6c0-4.6 4.5-8 8-8h25c4.2 0 7.5 4.5 7.5 7.8v6.5h-7.4l3.4.1c4.9.1 6.7 8.4.4 8.5l-24.3.2 26.7-.2c1 0 1.6.6 1.5 1.9-.4 3.9-2.5 7.1-6.5 7H71.6c-3.5 0-6.8-3.6-6.8-7.2 0 0 .6-1.3 1.5-1.4h6.1l-3.6-.1c-5.7-.1-6-8.7.7-8.7z"/>
+                        <path fill="none" stroke="#000" stroke-linecap="square" stroke-width="2.6" d="M78.2 166.8v.7m7.3 2.2v.6m7.2-3.5v.7"/>
+                        <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M127.6 186h14.7l-.2 5.6c0 .7-.9 1.4-1.6 1.4l-25.7.2c-.6 0-1.5-.5-1.5-1.2l-.4-6h9.4"/>
+                    </g>
+                </svg>
+                <button class="button-css button" onclick="downloadPng(this.parentElement.firstElementChild);">&#x1f4be; PNG</button><button class="button-css button" onclick="downloadSvg(this.parentElement.firstElementChild);">&#x1f4be; SVG</button>
+            </div>
+        </div>
+
 
     </div>
     <div id="premade"></div>
@@ -15096,6 +15157,17 @@
         $('#corner-select').addEventListener('change', (e) => {
             $$('.button-frame').forEach(el => { el.setAttribute('ry', e.target.value); });
             $$('.button-window').forEach(el => { el.setAttribute('ry', e.target.value * 0.625); });
+        });
+
+        $('#border-select').addEventListener('change', (e) => {
+            if (e.target.checked === true) {
+                $$('.button-frame').forEach(el => { el.setAttribute('stroke', '#000'); });
+                $$('.button-frame').forEach(el => { el.setAttribute('stroke-width', '8px'); });
+            } else {
+                $$('.button-frame').forEach(el => { el.setAttribute('stroke', 'none'); });
+                $$('.button-frame').forEach(el => { el.setAttribute('stroke-width', '0'); });
+            }
+            checkContrast('text');
         });
 
         $('#font-select').addEventListener('change', buildPremade);
@@ -15138,7 +15210,7 @@
             const svgns = "http://www.w3.org/2000/svg";
 
             containerDiv.appendChild(svgElement);
-            svgElement.setAttribute('viewBox', (size === 1 ? '0 0 250 300' : '0 0 400 130'));
+            svgElement.setAttribute('viewBox', (size === 1 ? '-10 -10 270 320' : '-10 -10 420 150'));
 
             let frameElement = document.createElementNS(svgns, 'rect');
             svgElement.appendChild(frameElement);
